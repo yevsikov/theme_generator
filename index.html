@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Theme Generator v0.01</title>
+		<title>Theme Generator v19.09.22</title>
 		<script src="libs/color-scheme.min.js"></script>
 		<script src="libs/jquery-3.4.1.min.js"></script>
         <style>
@@ -20,7 +20,6 @@
                 min-width: 20px;
                 height: 20px;
                 padding: 10px;
-                background-color: green;
                 display: inline-block;
             }
             .circle-description {
@@ -160,12 +159,7 @@
                 Distance:
                 <select id="distance_select">
                     <option value="0.15">0.15</option>
-                    <option value="0.25">0.25</option>
-                    <option value="0.35">0.35</option>
-                    <option value="0.45">0.45</option>
-                    <option value="0.55">0.55</option>
-                    <option value="0.65">0.65</option>
-                    <option value="0.75">0.75</option>
+                    <option value="0.40">0.40</option>
                     <option value="0.85">0.85</option>
                 </select>
             </p>
@@ -247,125 +241,114 @@
 		<script>
         (function ( $ ) {
 
-                var currentSansSerif1 = 'Ruda';
-                var currentSansSerifLink1 = 'Ruda';
-                var currentSerif2 = 'Finger Paint';
-                var currentSerifLink2 = 'Finger+Paint';
-                var currentHandwriting3 = 'Modern Antiqua';
-                var currentHandwritingLink3 = 'Modern+Antiqua';
-                
-                function isSansSerif(item) {
-                  return item.category == "sans-serif";
-                }        
-                
-                function isSerif(item) {
-                  return item.category == "serif";
-                }  
-                
-                function isForLogo(item) {
-                  return item.category == "handwriting" || item.category == "display";
+            var currentSansSerif1 = 'Ruda';
+            var currentSansSerifLink1 = 'Ruda';
+            var currentSerif2 = 'Finger Paint';
+            var currentSerifLink2 = 'Finger+Paint';
+            var currentHandwriting3 = 'Modern Antiqua';
+            var currentHandwritingLink3 = 'Modern+Antiqua';
+            
+            function isSansSerif(item) {
+                return item.category == "sans-serif";
+            }        
+            
+            function isSerif(item) {
+                return item.category == "serif";
+            }  
+            
+            function isForLogo(item) {
+                return item.category == "handwriting" || item.category == "display";
+            }
+            
+            function randomizeFonts(listOfFonts) {
+                currentSansSerif1 = listOfFonts.filter(isSansSerif)[Math.floor((Math.random() * listOfFonts.filter(isSansSerif).length) + 1)].family;
+                currentSansSerifLink1 = currentSansSerif1.replace(/\s/g, "+");
+                currentSerif2 = listOfFonts.filter(isSerif)[Math.floor((Math.random() * listOfFonts.filter(isSerif).length) + 1)].family;
+                currentSerifLink2 = currentSerif2.replace(/\s/g, "+"); 
+                currentHandwriting3 = listOfFonts.filter(isForLogo)[Math.floor((Math.random() * listOfFonts.filter(isForLogo).length) + 1)].family;
+                currentHandwritingLink3 = currentHandwriting3.replace(/\s/g, "+");
+            }
+            
+            function connectFont(link) {
+                var newDiv = document.createElement("link"); 
+                newDiv.href = "https://fonts.googleapis.com/css?family=" + link;
+                newDiv.rel = "stylesheet";
+                var newContent = document.createTextNode(""); 
+                newDiv.appendChild(newContent);  
+                var currentDiv = document.getElementById("js-header"); 
+                document.body.insertBefore(newDiv, currentDiv);
+            }
+            
+            function generate() {
+                //Load list of fonts
+                var listOfFonts = {};
+                if (localStorage.getItem('localListOfFonts')) {
+                    console.log('Loaded from storage');
+                    listOfFonts = JSON.parse(localStorage.getItem('localListOfFonts'));
+                    randomizeFonts(listOfFonts);
+                } else {
+                    //TODO: change to JS (http://youmightnotneedjquery.com)
+                    $.get( "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBjnzN-_nm1saTaG_pXEDx3TFlSAXESdt8", function( data ) {
+                        listOfFonts = (data.items);
+                        console.log('Loaded from googleapis.com');
+                        localStorage.setItem('localListOfFonts', JSON.stringify(data.items));
+                        randomizeFonts(listOfFonts);
+                    });
                 }
                 
-                function generate(){
-                    //Download list of fonts
-                    var listOfFonts = {};
-                    
-                    if (localStorage.getItem('localListOfFonts')) {
-                        console.log('Loaded from storage');
-                        listOfFonts = JSON.parse(localStorage.getItem('localListOfFonts'));
-                        currentSansSerif1 = listOfFonts.filter(isSansSerif)[Math.floor((Math.random() * listOfFonts.filter(isSansSerif).length) + 1)].family;
-                        currentSansSerifLink1 = currentSansSerif1.replace(/\s/g, "+");
-                        currentSerif2 = listOfFonts.filter(isSerif)[Math.floor((Math.random() * listOfFonts.filter(isSerif).length) + 1)].family;
-                        currentSerifLink2 = currentSerif2.replace(/\s/g, "+"); 
-                        currentHandwriting3 = listOfFonts.filter(isForLogo)[Math.floor((Math.random() * listOfFonts.filter(isForLogo).length) + 1)].family;
-                        currentHandwritingLink3 = currentHandwriting3.replace(/\s/g, "+");
-                    } else {
-                        //TODO: change to JS (http://youmightnotneedjquery.com)
-                        $.get( "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBjnzN-_nm1saTaG_pXEDx3TFlSAXESdt8", function( data ) {
-                            listOfFonts = (data.items);
-                            console.log('Loaded from googleapis.com');
-                            localStorage.setItem('localListOfFonts', JSON.stringify(data.items));
-                            currentSansSerif1 = listOfFonts.filter(isSansSerif)[Math.floor((Math.random() * listOfFonts.filter(isSansSerif).length) + 1)].family;
-                            currentSansSerifLink1 = currentSansSerif1.replace(/\s/g, "+");
-                            currentSerif2 = listOfFonts.filter(isSerif)[Math.floor((Math.random() * listOfFonts.filter(isSerif).length) + 1)].family;
-                            currentSerifLink2 = currentSerif2.replace(/\s/g, "+");
-                            currentHandwriting3 = listOfFonts.filter(isForLogo)[Math.floor((Math.random() * listOfFonts.filter(isForLogo).length) + 1)].family;
-                            currentHandwritingLink3 = currentHandwriting3.replace(/\s/g, "+");
-                        });
-                    }
-                    //Connect Sans-serif Google-font
-                    var newDiv = document.createElement("link"); 
-                    newDiv.href = "https://fonts.googleapis.com/css?family=" + currentSansSerifLink1;
-                    newDiv.rel = "stylesheet";
-                    var newContent = document.createTextNode(""); 
-                    newDiv.appendChild(newContent);  
-                    var currentDiv = document.getElementById("js-header"); 
-                    document.body.insertBefore(newDiv, currentDiv);
+                //Connect Sans-Serif Google-font
+                connectFont(currentSansSerifLink1);
+                //Connect Serif Google-font
+                connectFont(currentSerifLink2);
+                //Connect Handwriting Google-font
+                connectFont(currentHandwritingLink3);
+                
+                //Colors generation
+                var s = new ColorScheme;
+                var scheme_select = document.getElementById('scheme_select');
+                var variation_select = document.getElementById('variation_select');
+                var scheme_select = document.getElementById('scheme_select');
+                var distance_select = document.getElementById('distance_select');
+                var colors = s.from_hue(Math.floor((Math.random() * 999999) + 1))
+                .scheme(scheme_select.options[scheme_select.selectedIndex].text)
+                .variation(variation_select.options[variation_select.selectedIndex].text)
+                .distance(distance_select.options[distance_select.selectedIndex].text)
+                .colors();
+                
 
-                    //Connect Serif Google-font
-                    var newDiv = document.createElement("link"); 
-                    newDiv.href = "https://fonts.googleapis.com/css?family=" + currentSerifLink2;
-                    newDiv.rel = "stylesheet";
-                    var newContent = document.createTextNode(""); 
-                    newDiv.appendChild(newContent);  
-                    var currentDiv = document.getElementById("js-header"); 
-                    document.body.insertBefore(newDiv, currentDiv); 
-                    
-                    //Connect Handwriting Google-font
-                    var newDiv = document.createElement("link"); 
-                    newDiv.href = "https://fonts.googleapis.com/css?family=" + currentHandwritingLink3;
-                    newDiv.rel = "stylesheet";
-                    var newContent = document.createTextNode(""); 
-                    newDiv.appendChild(newContent);  
-                    var currentDiv = document.getElementById("js-header"); 
-                    document.body.insertBefore(newDiv, currentDiv); 
-                    
-                    //Colors generation
-                    var s = new ColorScheme;
-                    var scheme_select = document.getElementById('scheme_select');
-                    var variation_select = document.getElementById('variation_select');
-                    var scheme_select = document.getElementById('scheme_select');
-                    var distance_select = document.getElementById('distance_select');
-                    var colors = s.from_hue(Math.floor((Math.random() * 999999) + 1))
-                    .scheme(scheme_select.options[scheme_select.selectedIndex].text)
-                    .variation(variation_select.options[variation_select.selectedIndex].text)
-                    .distance(distance_select.options[distance_select.selectedIndex].text)
-                    .colors();
-                    
+                                    
+                //Print elements
+                $('.js-color-1').css('color', '#' + colors[0]);
+                $('.js-color-2').css('color', '#' + colors[1]);
+                $('.js-color-3').css('color', '#' + colors[2]);
+                $('.js-color-4').css('color', '#' + colors[3]);
 
-                                        
-                    //Print elements
-                    $('.js-color-1').css('color', '#' + colors[0]);
-                    $('.js-color-2').css('color', '#' + colors[1]);
-                    $('.js-color-3').css('color', '#' + colors[2]);
-                    $('.js-color-4').css('color', '#' + colors[3]);
-
-                    $('.js-bg-1').css('backgroundColor', '#' + colors[0]);
-                    $('.js-bg-2').css('backgroundColor', '#' + colors[1]);
-                    $('.js-bg-3').css('backgroundColor', '#' + colors[2]);
-                    $('.js-bg-4').css('backgroundColor', '#' + colors[3]);
-                    
-                    $('.js-font-1').css('fontFamily', currentSansSerif1);
-                    $('.js-font-2').css('fontFamily', currentSerif2);
-                    $('.js-font-3').css('fontFamily', currentHandwriting3);
-                    
-            
-                    $('.js-bg-text-1').text('#' + colors[0]);
-                    $('.js-bg-text-2').text('#' + colors[1]);
-                    $('.js-bg-text-3').text('#' + colors[2]);
-                    $('.js-bg-text-4').text('#' + colors[3]);
+                $('.js-bg-1').css('backgroundColor', '#' + colors[0]);
+                $('.js-bg-2').css('backgroundColor', '#' + colors[1]);
+                $('.js-bg-3').css('backgroundColor', '#' + colors[2]);
+                $('.js-bg-4').css('backgroundColor', '#' + colors[3]);
+                
+                $('.js-font-1').css('fontFamily', currentSansSerif1);
+                $('.js-font-2').css('fontFamily', currentSerif2);
+                $('.js-font-3').css('fontFamily', currentHandwriting3);
+                
+        
+                $('.js-bg-text-1').text('#' + colors[0]);
+                $('.js-bg-text-2').text('#' + colors[1]);
+                $('.js-bg-text-3').text('#' + colors[2]);
+                $('.js-bg-text-4').text('#' + colors[3]);
 
 
-                    $('.js-font-text-1').text(currentSansSerif1);
-                    $('.js-font-text-2').text(currentSerif2);
-                    $('.js-font-text-3').text(currentHandwriting3);
-                    
-                    $('.js-font-url-1').text('https://fonts.googleapis.com/css?family=' + currentSansSerifLink1);
-                    $('.js-font-url-2').text('https://fonts.googleapis.com/css?family=' + currentSerifLink2);
-                    $('.js-font-url-3').text('https://fonts.googleapis.com/css?family=' + currentHandwritingLink3);
-                    
-                    
-                    var addRule = (function(style) {
+                $('.js-font-text-1').text(currentSansSerif1);
+                $('.js-font-text-2').text(currentSerif2);
+                $('.js-font-text-3').text(currentHandwriting3);
+                
+                $('.js-font-url-1').text('https://fonts.googleapis.com/css?family=' + currentSansSerifLink1);
+                $('.js-font-url-2').text('https://fonts.googleapis.com/css?family=' + currentSerifLink2);
+                $('.js-font-url-3').text('https://fonts.googleapis.com/css?family=' + currentHandwritingLink3);
+                
+                
+                var addRule = (function(style) {
                     var sheet = document.head.appendChild(style).sheet;
                     return function(selector, css){
                         var propText = Object.keys(css).map(function(p){
@@ -373,19 +356,15 @@
                         }).join(";");
                         sheet.insertRule(selector + "{" + propText + "}", sheet.cssRules.length);
                     }
-                    })(document.createElement("style"));
+                })(document.createElement("style"));
 
-                    addRule("::selection", {
-                        background: '#' + colors[1] + '',
-                        color: '#' + colors[2] + '',
-                    });
-                        
-                    
-                    
-                    
-                    console.log(colors);
-                }
-        
+                addRule("::selection", {
+                    background: '#' + colors[1] + '',
+                    color: '#' + colors[2] + '',
+                });
+                
+            }
+
             $( document ).ready(function () {
                 $generateBtn = $('#generate');
                 
