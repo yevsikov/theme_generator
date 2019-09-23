@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Theme Generator v0.01</title>
+		<script src="libs/color-scheme.min.js"></script>
+		<script src="libs/jquery-3.4.1.min.js"></script>
+        <style>
+            body {
+                font-family: monospace;
+            }
+            .circles-wrapper {
+                display: flex;
+                align-items: center;
+                padding: 5px;
+                font-family: monospace;
+            }
+            .circle {
+                border-radius: 100%;
+                width: 20px;
+                min-width: 20px;
+                height: 20px;
+                padding: 10px;
+                background-color: green;
+                display: inline-block;
+            }
+            .circle-description {
+                color: gray;
+                padding: 0 25px 0 5px;
+            }
+            .fonts-wrapper {
+                padding: 5px;
+                color: gray;
+                font-family: monospace;
+            }
+            .page-wrapper {
+                display: flex;
+            }
+            .sidebar {
+                padding: 20px;
+                max-width: 25%;
+            }
+            .sidebar > h4 {
+                padding: 10px 20px;
+                margin-bottom: 0;
+                border-radius: 25px;
+            }
+            .content {
+                padding: 20px;
+            }
+            .heading {
+                display: flex;
+                margin-bottom: 5px;
+            }
+            .logo {
+                width: 85%;
+                padding: 15px;
+                font-size: 2em;
+                border-radius: 10px 0 0 0;
+            }
+            .logo-char {
+                /*text-shadow: 2px 2px 6px #3a3a3a;*/
+            }
+            .menu {
+                width: 15%;
+                padding: 10px 20px;
+                line-height: 2.5em;
+                border-radius: 0 10px 0 0;
+                text-align: right;
+            }
+            .menu > div {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .menu-btn {
+                padding: 7px;
+                cursor: pointer;
+                color: #fff4e6;
+                font-family: monospace;
+                font-size: 1.5em;
+                line-height: 2em;
+                border-radius: 7px;
+            }
+            .menu-btn:hover {
+                opacity: 0.9;
+            }
+            .link {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+            .link:hover {
+                text-decoration: underline;
+                opacity: 0.75;
+            }
+            .footer {
+                color: white;
+                padding: 10px;
+                margin-top: 5px;
+                text-align: right;
+                border-radius: 0 0 10px 10px;
+            }
+            .page-wrap {
+                max-width: 1024px;
+                margin: auto;
+            }
+            #generate {
+                cursor:pointer;
+                font-weight:bold;
+                display:inline-block;
+                padding:15px 25px;
+                margin:5px;
+                border-radius:30px;
+                font-size:1.2em;
+            }
+            #generate:hover {
+                opacity: 0.9;
+            }
+            ul {
+                padding-left: 20px;
+            }
+            .picture {
+                width: 19px;
+                margin-right: 9px;
+                border-radius: 60px;
+            }
+            .coll-wrap {
+                display: flex;
+            }
+            select {
+                padding: 5px;
+                border-radius: 20px;
+            }
+        </style>
+	</head>
+	<body>
+        <div class="page-wrap">
+            <p style="display: inline-block;">
+                Scheme:
+                <select id="scheme_select">
+                    <option value="mono">mono</option>
+                    <option value="contrast">contrast</option>
+                    <option value="triade">triade</option>
+                    <option value="tetrade">tetrade</option>
+                    <option value="analogic">analogic</option>
+                </select>
+                <br>
+            </p>
+            <p style="display: inline-block;">
+                Variation:
+                <select id="variation_select">
+                    <option value="pastel">pastel</option>
+                    <option value="light">light</option>
+                    <option value="default">default</option>
+                    <option value="soft">soft</option>
+                    <option value="hard">hard</option>
+                    <option value="pale">pale</option>
+                </select>
+                <br>
+            </p>
+            <p style="display: inline-block;">
+                Distance:
+                <select id="distance_select">
+                    <option value="0.15">0.15</option>
+                    <option value="0.25">0.25</option>
+                    <option value="0.35">0.35</option>
+                    <option value="0.45">0.45</option>
+                    <option value="0.55">0.55</option>
+                    <option value="0.65">0.65</option>
+                    <option value="0.75">0.75</option>
+                    <option value="0.85">0.85</option>
+                </select>
+            </p>
+            <div id="generate" class="js-bg-2 js-color-3">GENERATE!</div>
+            <hr>
+        </div>    
+        
+        <div class="page-wrap" id="js-header">
+            <div class="circles-wrapper">
+                <span class="circle js-bg-1"> </span>
+                <span class="circle-description js-bg-text-1"></span>
+                <span class="circle js-bg-2"> </span>
+                <span class="circle-description js-bg-text-2"></span>
+                <span class="circle js-bg-3"> </span> 
+                <span class="circle-description js-bg-text-3"></span>
+                <span class="circle js-bg-4"> </span>
+                <span class="circle-description js-bg-text-4"></span>
+            </div>
+            <div class="fonts-wrapper">
+                <span class="js-font-url-1"></span> <br>
+                <span class="js-font-url-2"></span>  <br>
+                <span class="js-font-url-3"></span> 
+            </div>
+
+            <hr>
+            <br>
+        
+            <div class="heading">
+                <div class="js-bg-3 js-font-3 logo">
+                    <span class="js-color-2">Lo</span><span class="js-color-4 logo-char">g</span><span class="js-color-2">o</span>
+                </div>
+                <div class="menu js-bg-3">
+                    <div class="js-bg-3 js-font-1 js-color-2">MENU <span class="js-bg-2 js-color-3 menu-btn">☰</span></div>
+                </div>
+            </div>
+            <div class="page-wrapper">    
+                <div class="js-bg-3 content"> 
+                    <h2 class="js-color-2 js-font-1">Heading 1 - <span class="js-font-text-1"></span></h2> 
+                    <p class="js-font-2"> <span class="js-font-text-2"></span> - Lorem ipsum dolor <span class="js-color-4 js-font-2 link">link</span> sit amet, consectetur adipiscing elit, 
+                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip 
+                    ex ea commodo consequat. </p>
+
+                    <div class="coll-wrap">
+                        <span class="picture js-bg-4"> </span>
+                        <p class="js-font-2 js-color-4">
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, 
+                            eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        </p>
+                    </div>
+                    <h3 class="js-color-2 js-font-1">Heading 2</h3> 
+                    <p class="js-font-2">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.                
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa 
+                    qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                <div class="js-bg-1 js-font-2 sidebar">
+                    <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+                    <h4 class="js-color-3 js-bg-4 js-font-1">Colors:</h4> 
+                    <ul class="js-font-2">
+                        <li class="js-bg-text-1"></li>
+                        <li class="js-bg-text-2"></li>
+                        <li class="js-bg-text-3"></li>
+                        <li class="js-bg-text-4"></li>
+                    </ul>
+                    <h4 class="js-color-3 js-bg-4 js-font-1">Fonts:</h4> 
+                    <ul class="js-font-2">
+                        <li>Headers - <span class="js-font-text-1 js-font-2"></span></li>
+                        <li>Text - <span class="js-font-text-2 js-font-2"></span></li>
+                        <li>Logo - <span class="js-font-text-3 js-font-2"></span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="js-bg-2 js-color-3 js-font-1 footer">
+                Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam (c) 2019
+            </div>
+        </div>
+        
+
+		<script>
+        (function ( $ ) {
+
+                var currentSansSerif1 = 'Ruda';
+                var currentSansSerifLink1 = 'Ruda';
+                var currentSerif2 = 'Finger Paint';
+                var currentSerifLink2 = 'Finger+Paint';
+                var currentHandwriting3 = 'Modern Antiqua';
+                var currentHandwritingLink3 = 'Modern+Antiqua';
+                
+                function isSansSerif(item) {
+                  return item.category == "sans-serif";
+                }        
+                
+                function isSerif(item) {
+                  return item.category == "serif";
+                }  
+                
+                function isForLogo(item) {
+                  return item.category == "handwriting" || item.category == "display";
+                }
+                
+                function generate(){
+                    //Download list of fonts
+                    var listOfFonts = {};
+                    
+                    if (localStorage.getItem('localListOfFonts')) {
+                        console.log('Loaded from storage');
+                        listOfFonts = JSON.parse(localStorage.getItem('localListOfFonts'));
+                        currentSansSerif1 = listOfFonts.filter(isSansSerif)[Math.floor((Math.random() * listOfFonts.filter(isSansSerif).length) + 1)].family;
+                        currentSansSerifLink1 = currentSansSerif1.replace(/\s/g, "+");
+                        currentSerif2 = listOfFonts.filter(isSerif)[Math.floor((Math.random() * listOfFonts.filter(isSerif).length) + 1)].family;
+                        currentSerifLink2 = currentSerif2.replace(/\s/g, "+"); 
+                        currentHandwriting3 = listOfFonts.filter(isForLogo)[Math.floor((Math.random() * listOfFonts.filter(isForLogo).length) + 1)].family;
+                        currentHandwritingLink3 = currentHandwriting3.replace(/\s/g, "+");
+                    } else {
+                        //TODO: change to JS (http://youmightnotneedjquery.com)
+                        $.get( "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBjnzN-_nm1saTaG_pXEDx3TFlSAXESdt8", function( data ) {
+                            listOfFonts = (data.items);
+                            console.log('Loaded from googleapis.com');
+                            localStorage.setItem('localListOfFonts', JSON.stringify(data.items));
+                            currentSansSerif1 = listOfFonts.filter(isSansSerif)[Math.floor((Math.random() * listOfFonts.filter(isSansSerif).length) + 1)].family;
+                            currentSansSerifLink1 = currentSansSerif1.replace(/\s/g, "+");
+                            currentSerif2 = listOfFonts.filter(isSerif)[Math.floor((Math.random() * listOfFonts.filter(isSerif).length) + 1)].family;
+                            currentSerifLink2 = currentSerif2.replace(/\s/g, "+");
+                            currentHandwriting3 = listOfFonts.filter(isForLogo)[Math.floor((Math.random() * listOfFonts.filter(isForLogo).length) + 1)].family;
+                            currentHandwritingLink3 = currentHandwriting3.replace(/\s/g, "+");
+                        });
+                    }
+                    //Connect Sans-serif Google-font
+                    var newDiv = document.createElement("link"); 
+                    newDiv.href = "https://fonts.googleapis.com/css?family=" + currentSansSerifLink1;
+                    newDiv.rel = "stylesheet";
+                    var newContent = document.createTextNode(""); 
+                    newDiv.appendChild(newContent);  
+                    var currentDiv = document.getElementById("js-header"); 
+                    document.body.insertBefore(newDiv, currentDiv);
+
+                    //Connect Serif Google-font
+                    var newDiv = document.createElement("link"); 
+                    newDiv.href = "https://fonts.googleapis.com/css?family=" + currentSerifLink2;
+                    newDiv.rel = "stylesheet";
+                    var newContent = document.createTextNode(""); 
+                    newDiv.appendChild(newContent);  
+                    var currentDiv = document.getElementById("js-header"); 
+                    document.body.insertBefore(newDiv, currentDiv); 
+                    
+                    //Connect Handwriting Google-font
+                    var newDiv = document.createElement("link"); 
+                    newDiv.href = "https://fonts.googleapis.com/css?family=" + currentHandwritingLink3;
+                    newDiv.rel = "stylesheet";
+                    var newContent = document.createTextNode(""); 
+                    newDiv.appendChild(newContent);  
+                    var currentDiv = document.getElementById("js-header"); 
+                    document.body.insertBefore(newDiv, currentDiv); 
+                    
+                    //Colors generation
+                    var s = new ColorScheme;
+                    var scheme_select = document.getElementById('scheme_select');
+                    var variation_select = document.getElementById('variation_select');
+                    var scheme_select = document.getElementById('scheme_select');
+                    var distance_select = document.getElementById('distance_select');
+                    var colors = s.from_hue(Math.floor((Math.random() * 999999) + 1))
+                    .scheme(scheme_select.options[scheme_select.selectedIndex].text)
+                    .variation(variation_select.options[variation_select.selectedIndex].text)
+                    .distance(distance_select.options[distance_select.selectedIndex].text)
+                    .colors();
+                    
+
+                                        
+                    //Print elements
+                    $('.js-color-1').css('color', '#' + colors[0]);
+                    $('.js-color-2').css('color', '#' + colors[1]);
+                    $('.js-color-3').css('color', '#' + colors[2]);
+                    $('.js-color-4').css('color', '#' + colors[3]);
+
+                    $('.js-bg-1').css('backgroundColor', '#' + colors[0]);
+                    $('.js-bg-2').css('backgroundColor', '#' + colors[1]);
+                    $('.js-bg-3').css('backgroundColor', '#' + colors[2]);
+                    $('.js-bg-4').css('backgroundColor', '#' + colors[3]);
+                    
+                    $('.js-font-1').css('fontFamily', currentSansSerif1);
+                    $('.js-font-2').css('fontFamily', currentSerif2);
+                    $('.js-font-3').css('fontFamily', currentHandwriting3);
+                    
+            
+                    $('.js-bg-text-1').text('#' + colors[0]);
+                    $('.js-bg-text-2').text('#' + colors[1]);
+                    $('.js-bg-text-3').text('#' + colors[2]);
+                    $('.js-bg-text-4').text('#' + colors[3]);
+
+
+                    $('.js-font-text-1').text(currentSansSerif1);
+                    $('.js-font-text-2').text(currentSerif2);
+                    $('.js-font-text-3').text(currentHandwriting3);
+                    
+                    $('.js-font-url-1').text('https://fonts.googleapis.com/css?family=' + currentSansSerifLink1);
+                    $('.js-font-url-2').text('https://fonts.googleapis.com/css?family=' + currentSerifLink2);
+                    $('.js-font-url-3').text('https://fonts.googleapis.com/css?family=' + currentHandwritingLink3);
+                    
+                    
+                    var addRule = (function(style) {
+                    var sheet = document.head.appendChild(style).sheet;
+                    return function(selector, css){
+                        var propText = Object.keys(css).map(function(p){
+                            return p+":"+css[p]
+                        }).join(";");
+                        sheet.insertRule(selector + "{" + propText + "}", sheet.cssRules.length);
+                    }
+                    })(document.createElement("style"));
+
+                    addRule("::selection", {
+                        background: '#' + colors[1] + '',
+                        color: '#' + colors[2] + '',
+                    });
+                        
+                    
+                    
+                    
+                    console.log(colors);
+                }
+        
+            $( document ).ready(function () {
+                $generateBtn = $('#generate');
+                
+                $generateBtn.on('click', function(){
+                    generate();
+                });
+            
+                generate();
+            });
+        })(jQuery);    
+
+		</script>
+	</body>
+</html>
