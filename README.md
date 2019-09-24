@@ -1,1 +1,2 @@
-Theme generator: <a href="https://yevsikov.github.io/theme_generator/" target="_blank">https://yevsikov.github.io/theme_generator/</a>
+Theme generator: <a href="https://yevsikov.github.io/theme_generator/" target="_blank">https://yevsikov.github.io/theme_generator/</a>  
+Is based on <a href="https://github.com/c0bra/color-scheme-js" target="_blank">color-scheme.js</a> and <a href="https://developers.google.com/fonts/docs/getting_started" target="_blank">Google Fonts API</a>
