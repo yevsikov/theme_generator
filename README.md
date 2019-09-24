@@ -1,1 +1,1 @@
-Theme generator: https://yevsikov.github.io/theme_generator/
+Theme generator: <a href="https://yevsikov.github.io/theme_generator/" target="_blank">https://yevsikov.github.io/theme_generator/</a>
