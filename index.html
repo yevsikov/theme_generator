@@ -3,7 +3,6 @@
 	<head>
 		<title>Theme Generator v19.09.22</title>
 		<script src="libs/color-scheme.min.js"></script>
-		<script src="libs/jquery-3.4.1.min.js"></script>
         <style>
             body {
                 font-family: monospace;
@@ -21,6 +20,12 @@
                 height: 20px;
                 padding: 10px;
                 display: inline-block;
+            }
+            .gray > .circle {
+                background-color: #ededed!important;
+            }
+            .gray > span {
+                color: #efefef!important;
             }
             .circle-description {
                 color: gray;
@@ -55,9 +60,6 @@
                 padding: 15px;
                 font-size: 2em;
                 border-radius: 10px 0 0 0;
-            }
-            .logo-char {
-                /*text-shadow: 2px 2px 6px #3a3a3a;*/
             }
             .menu {
                 width: 15%;
@@ -165,10 +167,9 @@
             </p>
             <div id="generate" class="js-bg-2 js-color-3">GENERATE!</div>
             <hr>
-        </div>    
-        
+        </div>
         <div class="page-wrap" id="js-header">
-            <div class="circles-wrapper">
+            <div class="circles-wrapper circles-wrapper-js">
                 <span class="circle js-bg-1"> </span>
                 <span class="circle-description js-bg-text-1"></span>
                 <span class="circle js-bg-2"> </span>
@@ -178,15 +179,12 @@
                 <span class="circle js-bg-4"> </span>
                 <span class="circle-description js-bg-text-4"></span>
             </div>
-            <div class="fonts-wrapper">
+            <div class="fonts-wrapper fonts-wrapper-js">
                 <span class="js-font-url-1"></span> <br>
                 <span class="js-font-url-2"></span>  <br>
                 <span class="js-font-url-3"></span> 
             </div>
-
             <hr>
-            <br>
-        
             <div class="heading">
                 <div class="js-bg-3 js-font-3 logo">
                     <span class="js-color-2">Lo</span><span class="js-color-4 logo-char">g</span><span class="js-color-2">o</span>
@@ -236,30 +234,26 @@
                 Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam (c) 2019
             </div>
         </div>
-        
-
 		<script>
-        (function ( $ ) {
-
             var currentSansSerif1 = 'Ruda';
             var currentSansSerifLink1 = 'Ruda';
             var currentSerif2 = 'Finger Paint';
             var currentSerifLink2 = 'Finger+Paint';
             var currentHandwriting3 = 'Modern Antiqua';
             var currentHandwritingLink3 = 'Modern+Antiqua';
-            
+
             function isSansSerif(item) {
                 return item.category == "sans-serif";
             }        
-            
+
             function isSerif(item) {
                 return item.category == "serif";
             }  
-            
+
             function isForLogo(item) {
                 return item.category == "handwriting" || item.category == "display";
             }
-            
+
             function randomizeFonts(listOfFonts) {
                 currentSansSerif1 = listOfFonts.filter(isSansSerif)[Math.floor((Math.random() * listOfFonts.filter(isSansSerif).length) + 1)].family;
                 currentSansSerifLink1 = currentSansSerif1.replace(/\s/g, "+");
@@ -268,7 +262,7 @@
                 currentHandwriting3 = listOfFonts.filter(isForLogo)[Math.floor((Math.random() * listOfFonts.filter(isForLogo).length) + 1)].family;
                 currentHandwritingLink3 = currentHandwriting3.replace(/\s/g, "+");
             }
-            
+
             function connectFont(link) {
                 var newDiv = document.createElement("link"); 
                 newDiv.href = "https://fonts.googleapis.com/css?family=" + link;
@@ -278,31 +272,40 @@
                 var currentDiv = document.getElementById("js-header"); 
                 document.body.insertBefore(newDiv, currentDiv);
             }
-            
+
             function generate() {
                 //Load list of fonts
                 var listOfFonts = {};
-                if (localStorage.getItem('localListOfFonts')) {
+                if ( (localStorage.getItem('localListOfFonts')) && (typeof( JSON.parse(localStorage.getItem('localListOfFonts')) ) )==='object' ){
                     console.log('Loaded from storage');
                     listOfFonts = JSON.parse(localStorage.getItem('localListOfFonts'));
                     randomizeFonts(listOfFonts);
                 } else {
-                    //TODO: change to JS (http://youmightnotneedjquery.com)
-                    $.get( "https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBjnzN-_nm1saTaG_pXEDx3TFlSAXESdt8", function( data ) {
+                    var request = new XMLHttpRequest();
+                    request.open('GET', 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyBjnzN-_nm1saTaG_pXEDx3TFlSAXESdt8', true);
+                    request.onload = function() {
+                      if (this.status >= 200 && this.status < 400) {
+                        // Success!
+                        var data = JSON.parse(this.response);
+                        console.log(data);
                         listOfFonts = (data.items);
                         console.log('Loaded from googleapis.com');
                         localStorage.setItem('localListOfFonts', JSON.stringify(data.items));
                         randomizeFonts(listOfFonts);
-                    });
+                      } else {
+                        console.log('Can not connect to the Google API');
+                      }
+                    };
+                    request.send();
                 }
-                
+
                 //Connect Sans-Serif Google-font
                 connectFont(currentSansSerifLink1);
                 //Connect Serif Google-font
                 connectFont(currentSerifLink2);
                 //Connect Handwriting Google-font
                 connectFont(currentHandwritingLink3);
-                
+
                 //Colors generation
                 var s = new ColorScheme;
                 var scheme_select = document.getElementById('scheme_select');
@@ -314,40 +317,36 @@
                 .variation(variation_select.options[variation_select.selectedIndex].text)
                 .distance(distance_select.options[distance_select.selectedIndex].text)
                 .colors();
-                
 
-                                    
-                //Print elements
-                $('.js-color-1').css('color', '#' + colors[0]);
-                $('.js-color-2').css('color', '#' + colors[1]);
-                $('.js-color-3').css('color', '#' + colors[2]);
-                $('.js-color-4').css('color', '#' + colors[3]);
+                //Stylize elements
+                changeStyles('.js-color-1', 'color', '#' + colors[0]);
+                changeStyles('.js-color-2', 'color', '#' + colors[1]);
+                changeStyles('.js-color-3', 'color', '#' + colors[2]);
+                changeStyles('.js-color-4', 'color', '#' + colors[3]);
 
-                $('.js-bg-1').css('backgroundColor', '#' + colors[0]);
-                $('.js-bg-2').css('backgroundColor', '#' + colors[1]);
-                $('.js-bg-3').css('backgroundColor', '#' + colors[2]);
-                $('.js-bg-4').css('backgroundColor', '#' + colors[3]);
-                
-                $('.js-font-1').css('fontFamily', currentSansSerif1);
-                $('.js-font-2').css('fontFamily', currentSerif2);
-                $('.js-font-3').css('fontFamily', currentHandwriting3);
-                
-        
-                $('.js-bg-text-1').text('#' + colors[0]);
-                $('.js-bg-text-2').text('#' + colors[1]);
-                $('.js-bg-text-3').text('#' + colors[2]);
-                $('.js-bg-text-4').text('#' + colors[3]);
+                changeStyles('.js-bg-1', 'backgroundColor', '#' + colors[0]);
+                changeStyles('.js-bg-2', 'backgroundColor', '#' + colors[1]);
+                changeStyles('.js-bg-3', 'backgroundColor', '#' + colors[2]);
+                changeStyles('.js-bg-4', 'backgroundColor', '#' + colors[3]);
 
+                changeStyles('.js-font-1', 'fontFamily', currentSansSerif1);
+                changeStyles('.js-font-2', 'fontFamily', currentSerif2);
+                changeStyles('.js-font-3', 'fontFamily', currentHandwriting3);
 
-                $('.js-font-text-1').text(currentSansSerif1);
-                $('.js-font-text-2').text(currentSerif2);
-                $('.js-font-text-3').text(currentHandwriting3);
-                
-                $('.js-font-url-1').text('https://fonts.googleapis.com/css?family=' + currentSansSerifLink1);
-                $('.js-font-url-2').text('https://fonts.googleapis.com/css?family=' + currentSerifLink2);
-                $('.js-font-url-3').text('https://fonts.googleapis.com/css?family=' + currentHandwritingLink3);
-                
-                
+                changeStyles('.js-bg-text-1', 'text', '#' + colors[0]);
+                changeStyles('.js-bg-text-2', 'text', '#' + colors[1]);
+                changeStyles('.js-bg-text-3', 'text', '#' + colors[2]);
+                changeStyles('.js-bg-text-4', 'text', '#' + colors[3]);
+
+                changeStyles('.js-font-text-1', 'text', currentSansSerif1);
+                changeStyles('.js-font-text-2', 'text', currentSerif2);
+                changeStyles('.js-font-text-3', 'text', currentHandwriting3);
+
+                changeStyles('.js-font-url-1', 'text', 'https://fonts.googleapis.com/css?family=' + currentSansSerifLink1);
+                changeStyles('.js-font-url-2', 'text', 'https://fonts.googleapis.com/css?family=' + currentSerifLink2);
+                changeStyles('.js-font-url-3', 'text', 'https://fonts.googleapis.com/css?family=' + currentHandwritingLink3);
+
+                //add styles for selected text
                 var addRule = (function(style) {
                     var sheet = document.head.appendChild(style).sheet;
                     return function(selector, css){
@@ -357,25 +356,40 @@
                         sheet.insertRule(selector + "{" + propText + "}", sheet.cssRules.length);
                     }
                 })(document.createElement("style"));
-
                 addRule("::selection", {
                     background: '#' + colors[1] + '',
                     color: '#' + colors[2] + '',
                 });
-                
             }
 
-            $( document ).ready(function () {
-                $generateBtn = $('#generate');
-                
-                $generateBtn.on('click', function(){
-                    generate();
+            function changeStyles(selector, stylename, val) {
+                var el = document.querySelectorAll(selector);
+                el.forEach( function(e) {
+                    switch (stylename) {
+                        case 'color':
+                            e.style.color = val;
+                            break;
+                        case 'backgroundColor':
+                            e.style.backgroundColor = val;
+                            break;
+                        case 'fontFamily':
+                            e.style.fontFamily = val;
+                            break;
+                        case 'text':
+                            e.innerHTML = val;
+                            break;
+                        default:
+                            console.log('style name is incorrect');
+                    }
                 });
+            }
             
+            window.addEventListener('load', function () {
                 generate();
-            });
-        })(jQuery);    
-
+                document.getElementById("generate").onclick = function() {
+                    generate();
+                }
+            }, false);
 		</script>
 	</body>
 </html>
